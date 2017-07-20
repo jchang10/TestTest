@@ -1,5 +1,5 @@
 ## setup run make
-% make
+% make install
 
 ## activate virtualenv
 % source venv/bin/activate
