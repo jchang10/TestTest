@@ -1,0 +1,19 @@
+
+{% macro render_query(filter) %}
+
+Filter string : <input type="text" name="filter" size="50" value="{{filter}}">
+<input type="submit" name="query" value="Run Query">
+<input type="submit" name="upload" value="Upload another file">
+<input type="submit" name="json" value="JSON Output">
+<br/>
+  <dd>
+    e.g. leave blank for <a href="{{url_for('view', filter='')}}"> all records </a><br/>
+    <a href="{{url_for('view', filter='1>0 order by score')}}"> all records order by score </a><br/>
+    <a href="{{url_for('view', filter='id=1')}}"> id=1 </a><br/>
+    <a href="{{url_for('view', filter="name like '%Peggy%'")}}"> name like '%Peggy%' </a> returns any matches for 'Peggy'<br/>
+    <a href="{{url_for('view', filter="score>500")}}"> score &gt; 500 </a><br/>
+    <a href="{{url_for('view', filter="weighting<0.5")}}"> weighting &lt; 0.5 </a><br/>
+    <a href="{{url_for('view', filter="name like '%Peggy%' and score<100")}}"> name like '%Peggy' and score &lt; 100 </a><br/>
+  </dd>
+
+{% endmacro %}
