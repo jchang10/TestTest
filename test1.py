@@ -4,6 +4,7 @@ import csv
 from flask import Flask, render_template, request, jsonify, url_for, redirect
 from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import text
 
 basedir = os.path.abspath(os.path.dirname(''))
 
@@ -66,7 +67,7 @@ def view():
     rows = None
     filter = request.args.get('filter', type=str)
     if filter:
-        rows = MyData.query.filter(filter).all()
+        rows = MyData.query.filter(text(filter)).all()
     else:
         rows = MyData.query.all()
 
