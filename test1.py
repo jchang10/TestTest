@@ -2,7 +2,6 @@
 import os
 import csv
 from flask import Flask, render_template, request, jsonify, url_for, redirect
-from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 
@@ -15,7 +14,6 @@ app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['DEBUG'] = True
 
-manager = Manager(app)
 db = SQLAlchemy(app)
 db.create_all()
 
@@ -90,5 +88,6 @@ def add_db_records(filename):
 
 if __name__ == '__main__':
     db.create_all()
-    manager.run()
+    app.run(debug=True, host='0.0.0.0')
+    
 
