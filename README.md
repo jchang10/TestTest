@@ -7,3 +7,5 @@
 ## run server
 % python3 test1.py
 
+## browse to http://server:5000/
+
