@@ -1,0 +1,42 @@
+{% import 'macros.html' as macros %}
+{% extends "base.html" %}
+{% block title %}Flasky{% endblock %}
+{% block scripts %}
+{{ super() }}
+    <script type="text/javascript" src="{{url_for('static',filename='sorttable.js')}}"></script>
+{% endblock %}
+{% block styles %}
+{{ super() }}
+    <style type="text/css">
+      /* Sortable tables */
+      table.sortable thead {
+      background-color: #333;
+      color: #cccccc;
+      font-weight: bold;
+      cursor: default;
+      }
+      th {
+      font-size: 100%;
+      }
+    </style>
+{% endblock %}
+{% block page_content %}
+    <form action="/view" method="GET">
+      {{macros.render_query(filter)}}
+    </form>
+    
+    <table class="sortable">
+      <tr>
+	{% for h in headers %}
+	<th>{{h}}</th>
+	{% endfor %}
+      </tr>
+      {% for r in rows %}
+      <tr>
+	{% for h in headers %}
+	<td>{{r|attr(h)}}</td>
+	{% endfor %}
+      </tr>
+      {% endfor %}
+    </table>
+{% endblock %}
