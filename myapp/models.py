@@ -2,28 +2,24 @@
 import boto3
 import os
 
-from pynamodb.models import Model
-from pynamodb.attributes import UnicodeAttribute, BooleanAttribute, UTCDateTimeAttribute, NumberAttribute
+from flask_sqlalchemy import SQLAlchemy
 
-class MyData(Model):
-    class Meta:
-        table_name = os.environ.get('STAGE', 'dev') + '.mydata'
-        region = boto3.Session().region_name
-        host = 'http://localhost:8000' \
-            if not os.environ.get('LAMBDA_TASK_ROOT') else None
-    id = UnicodeAttribute(hash_key=True)
-    customer_id = UnicodeAttribute()
-    name = UnicodeAttribute()
-    date = UTCDateTimeAttribute()
-    score = NumberAttribute(null=True)
-    weighting = NumberAttribute(null=True)
+from . import db
+
+class MyData(db.Model):
+    __tablename__ = 'mydata'
+    id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.String(64), unique=True)
+    name = db.Column(db.String(64))
+    date = db.Column(db.String(20))
+    score = db.Column(db.Integer)
+    weighting = db.Column(db.Float)
 
     def __repr__(self):
         return '<MyData %r>' % self.name
 
     def to_json(self):
         mydata = {
-            'id':self.id,
             'customer_id':self.customer_id,
             'name':self.name,
             'date':self.date,
@@ -31,3 +27,4 @@ class MyData(Model):
             'weighting':self.weighting
             }
         return mydata
+

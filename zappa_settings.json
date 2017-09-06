@@ -1,9 +1,14 @@
 {
     "dev": {
-        "app_function": "test1.app",
+        "app_function": "run.app",
         "aws_region": "us-west-1",
         "profile_name": "default",
         "s3_bucket": "jchang-imvutest2",
-	"keep_warm": false
+	"keep_warm": false,
+	"timeout_seconds": 300
+        "vpc_config" : {
+            "SubnetIds": [ "subnet-0c9d8f68","subnet-a2e8c4fa" ], // use the private subnet
+            "SecurityGroupIds": [ "sg-9f68bff9" ]
+	}
     }
 }

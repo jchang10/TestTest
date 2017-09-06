@@ -9,10 +9,11 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 
-from .models import MyData
+from config import config
 
 BASEDIR = '/tmp'
 
+db = SQLAlchemy()
 bootstrap = Bootstrap()
 myapp = Blueprint('myapp', __name__)
 
@@ -21,11 +22,11 @@ def create_app(config_name):
     app = Flask(__name__)
 
     # apply configuration
-    #cfg = os.path.join(os.getcwd(), 'config', config_name + '.py')
-    #app.config.from_pyfile(cfg)
-    app.config["APPLICATION_ROOT"] = "/abc/123"
+    app.config.from_object(config[config_name])
+    config[config_name].init_app(app)
 
     # initialize extensions
+    db.init_app(app)
     bootstrap.init_app(app)
 
     # register blueprints
@@ -33,13 +34,15 @@ def create_app(config_name):
 
     return app
 
+from .models import MyData
+
 @myapp.route("/testme")
 def testme():
     return "The URL for this page is {}".format(url_for('myapp.testme'))
 
 @myapp.route("/")
 def index():
-    if MyData.exists():
+    if MyData.query.count():
         return render_template('query.html')
     else:
         return redirect(url_for('myapp.uploader'))
@@ -66,32 +69,27 @@ def view():
     if filter:
         rows = MyData.query.filter(text(filter)).all()
     else:
-        rows = MyData.scan()
+        rows = MyData.query.all()
 
     if request.args.get('json'):
         return jsonify([r.to_json() for r in rows])
     else:
         return render_template('view.html', headers=headers, rows=rows, filter=filter)
     
-def convert_mydata(row):
-    myd = [row[0], row[1], dateutil.parser.parse(row[2]), int(row[3]), float(row[4])]
-    return myd
-
 def add_db_records(filename):
     data = []
     with open(filename) as f:
         r = csv.reader(f)
         headers = next(r)
-        count = 0
         for row in r:
-            row = convert_mydata(row) 
-            d = MyData(id=uuid.uuid4().hex, **dict(zip(headers, row)))
-            d.save()
-            count+=1
-    return count
+            d = MyData(**dict(zip(headers,row)))
+            data.append(d)
+    db.session.add_all(data)
+    db.session.commit()
+    return len(data)
 
-# @myapp.app_errorhandler(404)
-# def page_not_found(e):
-#     return render_template('404.html'), 404
+@myapp.app_errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 
