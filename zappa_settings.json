@@ -1,14 +1,32 @@
 {
-    "dev": {
+    "test": {
         "app_function": "run.app",
         "aws_region": "us-west-1",
         "profile_name": "default",
         "s3_bucket": "jchang-imvutest2",
 	"keep_warm": false,
-	"timeout_seconds": 300
+	"timeout_seconds": 10
         "vpc_config" : {
             "SubnetIds": [ "subnet-0c9d8f68","subnet-a2e8c4fa" ], // use the private subnet
             "SecurityGroupIds": [ "sg-9f68bff9" ]
-	}
-    }
+	},
+	"environment_variables": {
+	    "TEST_DATABASE_URI": "postgresql://imvutest:blahblah@imvutest.cix6ebfre1yf.us-west-1.rds.amazonaws.com/imvutestdb"
+	},
+    },
+    "prod": {
+        "app_function": "run.app",
+        "aws_region": "us-west-1",
+        "profile_name": "default",
+        "s3_bucket": "jchang-imvutest2",
+	"keep_warm": false,
+	"timeout_seconds": 10
+        "vpc_config" : {
+            "SubnetIds": [ "subnet-0c9d8f68","subnet-a2e8c4fa" ], // use the private subnet
+            "SecurityGroupIds": [ "sg-9f68bff9" ]
+	},
+	"environment_variables": {
+	    "PROD_DATABASE_URI": "postgresql://imvutest:blahblah@imvutest.cix6ebfre1yf.us-west-1.rds.amazonaws.com/imvutestdb"
+	},
+    },
 }

@@ -1,7 +1,7 @@
 {% import 'macros.html' as macros %}
 {% extends "base.html" %}
 {% block page_content %}
-  <form action="/view" method="GET">
+  <form action="{{url_for('myapp.view')}}" method="GET">
     {{macros.render_query('')}}
   </form>
 {% endblock %}

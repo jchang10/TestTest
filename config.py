@@ -21,25 +21,23 @@ class Config:
         pass
 
 class DevelopmentConfig(Config):
+    # SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
+    #     'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URI') or None
-    assert SQLALCHEMY_DATABASE_URI, "DEV_DATABASE_URI environment variable is not defined"
-#    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-#        'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
-class TestingConfig(Config):
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
+class AWSTestingConfig(Config):
+    DEBUG = False
+    TEST = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URI') or None
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data.sqlite')
-
+    DEBUG = False
+    SQLALCHEMY_DATABASE_URI = os.environ.get('PROD_DATABASE_URI') or None
+    
 config = {
-    'development': DevelopmentConfig,
-    'testing': TestingConfig,
-    'production': ProductionConfig,
-
+    'dev': DevelopmentConfig,
+    'test': AWSTestingConfig,
+    'prod': ProductionConfig,
     'default': DevelopmentConfig
 }

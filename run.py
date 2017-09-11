@@ -1,8 +1,12 @@
 
-import os
+import os, sys
 from myapp import create_app
 
-app = create_app(os.environ.get('FLASK_CONFIG', 'development'))
+"""
+python3 run.py
+"""
+
+app = create_app(os.environ.get('STAGE', 'default'))
 
 if __name__ == '__main__':
     # with app.app_context():
@@ -14,5 +18,6 @@ if __name__ == '__main__':
         #     db.session.add(u)
         #     db.session.commit()
     app.run(debug=True, host='0.0.0.0')
+
     
 

@@ -31,12 +31,16 @@
 	<th>{{h}}</th>
 	{% endfor %}
       </tr>
-      {% for r in rows %}
-      <tr>
-	{% for h in headers %}
-	<td>{{r|attr(h)}}</td>
+      {% if rows|length %}
+        {% for r in rows %}
+        <tr>
+	  {% for h in headers %}
+	  <td>{{r|attr(h)}}</td>
+	  {% endfor %}
+	</tr>
 	{% endfor %}
-      </tr>
-      {% endfor %}
+      {% else %}
+        <tr><td><b>No Records</b></td></tr>
+      {% endif %}
     </table>
 {% endblock %}
