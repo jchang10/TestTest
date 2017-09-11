@@ -25,6 +25,8 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), unique=True, index=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash = db.Column(db.String(128))
+    socials = db.relationship('OauthUser', backref='user',
+                                lazy='dynamic')
 
     @property
     def password(self):
@@ -44,14 +46,14 @@ class User(UserMixin, db.Model):
 class OauthUser(db.Model):
     __tablename__ = 'oauth_users'
     id = db.Column(db.Integer, primary_key=True)
+    provider = db.Column(db.String(64), nullable=False)
     social_id = db.Column(db.String(64), nullable=False, unique=True)
-    nickname = db.Column(db.String(64), nullable=False)
+    username = db.Column(db.String(64), nullable=True)
     email = db.Column(db.String(64), nullable=True)
     name = db.Column(db.String(64), nullable=True)
-    provider = db.Column(db.String(64), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
-    
 
+    
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))

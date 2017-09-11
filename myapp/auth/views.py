@@ -1,7 +1,10 @@
 from flask import render_template, redirect, request, url_for, flash
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
+
 from . import auth
-from ..models import User
+from .. import db
+from .oauth import OAuthSignIn
+from ..models import User, OauthUser
 from .forms import LoginForm
 
 
@@ -22,4 +25,52 @@ def login():
 def logout():
     logout_user()
     flash('You have been logged out.')
+    return redirect(url_for('main.index'))
+
+
+@auth.route('/oauth/<provider>')
+def oauth_authorize(provider):
+    if not current_user.is_anonymous:
+        return redirect(url_for('main.index'))
+    oauth = OAuthSignIn.get_provider(provider)
+    return oauth.authorize()
+
+
+@auth.route('/callback/<provider>')
+def oauth_callback(provider):
+    if not current_user.is_anonymous:
+        return redirect(url_for('main.index'))
+    oauth = OAuthSignIn.get_provider(provider)
+    #social_id, username, email = oauth.callback()
+    me = oauth.callback()
+    if me['social_id'] is None:
+        flash('Authentication failed.')
+        return redirect(url_for('main.index'))
+    ouser = OauthUser.query.filter(OauthUser.provider == provider, \
+                                   OauthUser.social_id == me['social_id']).first()
+    user = None
+    if ouser:
+        # oauth user already exists, so query the user record
+        user = User.query.filter_by(id=ouser.user_id).first()
+        assert user != None, "OAuth record missing corresponding User record."
+    else:
+        # create oauth user record. see if a user record exists with matching email.
+        # otherwise, create the new user record.
+        ouser = OauthUser(provider=provider,
+                          social_id=me['social_id'],
+                          username=me.get('username', None),
+                          email=me.get('email', None),
+                          name=me.get('name', None)
+        )
+        user = User.query.filter_by(email=ouser.email).first()
+        import pdb; pdb.set_trace()
+        if not user:
+            user = User(email=ouser.email,
+                        username=ouser.username if ouser.username else ouser.email,
+            )
+            user.socials.append(ouser)
+        db.session.add(ouser)
+        db.session.add(user)
+        db.session.commit()
+    login_user(user, True)
     return redirect(url_for('main.index'))

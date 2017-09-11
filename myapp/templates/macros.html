@@ -8,13 +8,13 @@ Filter string : <input type="text" name="filter" size="50" value="{{filter}}">
 <input type="submit" name="delete_all" value="Delete All" onclick="return confirm('Are you sure you want to delete all records?')">
 <br/>
   <dd>
-    e.g. leave blank for <a href="{{url_for('myapp.view', filter='')}}"> all records </a><br/>
-    <a href="{{url_for('myapp.view', filter='1>0 order by score')}}"> all records order by score </a><br/>
-    <a href="{{url_for('myapp.view', filter='id=1')}}"> id=1 </a><br/>
-    <a href="{{url_for('myapp.view', filter="name like '%Peggy%'")}}"> name like '%Peggy%' </a> returns any matches for 'Peggy'<br/>
-    <a href="{{url_for('myapp.view', filter="score>500")}}"> score &gt; 500 </a><br/>
-    <a href="{{url_for('myapp.view', filter="weighting<0.5")}}"> weighting &lt; 0.5 </a><br/>
-    <a href="{{url_for('myapp.view', filter="name like '%Peggy%' and score<100")}}"> name like '%Peggy' and score &lt; 100 </a><br/>
+    e.g. leave blank for <a href="{{url_for('main.view', filter='')}}"> all records </a><br/>
+    <a href="{{url_for('main.view', filter='1>0 order by score')}}"> all records order by score </a><br/>
+    <a href="{{url_for('main.view', filter='id=1')}}"> id=1 </a><br/>
+    <a href="{{url_for('main.view', filter="name like '%Peggy%'")}}"> name like '%Peggy%' </a> returns any matches for 'Peggy'<br/>
+    <a href="{{url_for('main.view', filter="score>500")}}"> score &gt; 500 </a><br/>
+    <a href="{{url_for('main.view', filter="weighting<0.5")}}"> weighting &lt; 0.5 </a><br/>
+    <a href="{{url_for('main.view', filter="name like '%Peggy%' and score<100")}}"> name like '%Peggy' and score &lt; 100 </a><br/>
   </dd>
 
 {% endmacro %}

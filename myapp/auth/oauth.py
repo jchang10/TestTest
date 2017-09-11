@@ -22,7 +22,7 @@ class OAuthSignIn(object):
         pass
 
     def get_callback_url(self):
-        return url_for('oauth_callback', provider=self.provider_name,
+        return url_for('auth.oauth_callback', provider=self.provider_name,
                        _external=True)
 
     @classmethod
@@ -67,13 +67,20 @@ class FacebookSignIn(OAuthSignIn):
             decoder=decode_json
         )
         me = oauth_session.get('me?fields=id,email').json()
-        return (
-            'facebook$' + me['id'],
-            me.get('email').split('@')[0],  # Facebook does not provide
-                                            # username, so the email's user
-                                            # is used instead
-            me.get('email')
-        )
+        # return (
+        #     'facebook$' + me['id'],
+        #     me.get('email').split('@')[0],  # Facebook does not provide
+        #                                     # username, so the email's user
+        #                                     # is used instead
+        #     me.get('email')
+        # )
+        return {
+            'provider': 'facebook',
+            'social_id': me['id'],
+            # Facebook does not provide username, so email's user is used instead.
+            'username': me.get('email').split('@')[0],
+            'email': me.get('email'),
+        }
 
 class TwitterSignIn(OAuthSignIn):
     def __init__(self):
@@ -107,7 +114,14 @@ class TwitterSignIn(OAuthSignIn):
         me = oauth_session.get('account/verify_credentials.json').json()
         social_id = 'twitter$' + str(me.get('id'))
         username = me.get('screen_name')
-        return social_id, username, None   # Twitter does not provide email
+        # return social_id, username, None   # Twitter does not provide email? is this true?
+        return {
+            'provider': 'twitter',
+            'social_id': str(me.get('id')),
+            'username': me.get('screen_name'),
+            'email': me.get('email'),
+            'name': None,
+        }
 
     
 class GoogleSignIn(OAuthSignIn):
@@ -142,11 +156,18 @@ class GoogleSignIn(OAuthSignIn):
             decoder=decode_json
         )
         me = oauth_session.get('userinfo').json()
-        return (
-            'google$' + me['id'],
-            me['name'],
-            me.get('email')
-        )
-
+        # return (
+        #     social_id: 'google$' + me['id'],
+        #     me['name'],
+        #     me.get('email')
+        # )
+        # No username
+        return {
+            'provider': 'google',
+            'social_id': me['id'],
+            'email': me['email'],
+            'name': me['name'],
+            'username': me.get('email').split('@')[0],
+        }
 
     

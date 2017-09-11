@@ -21,7 +21,7 @@
     </style>
 {% endblock %}
 {% block page_content %}
-    <form action="{{url_for('myapp.view')}}" method="GET">
+    <form action="{{url_for('main.view')}}" method="GET">
       {{macros.render_query(filter)}}
     </form>
     
