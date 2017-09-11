@@ -10,19 +10,17 @@
 <div class="col-md-4">
     {{ wtf.quick_form(form) }}
 </div>
-
-<p><b> Alternatively, continue with one of the following providers: </b></p>
-
-{% for message in get_flashed_messages() %}
-    <p><b>Error</b>: {{ message }}</p>
-{% endfor %}
+<div class="col-md-4">
 {% if current_user.is_authenticated %}
-    <h2>Hi, {{ current_user.nickname }}!</h2>
+    <h2>Hi, {{ current_user.username }}!</h2>
     <p><a href="{{ url_for('auth.logout') }}">Logout</a></p>
 {% else %}
-    <p><a href="{{ url_for('auth.oauth_authorize', provider='facebook') }}">Login with Facebook</a></p>
-    <p><a href="{{ url_for('auth.oauth_authorize', provider='twitter') }}">Login with Twitter</a></p>
-    <p><a href="{{ url_for('auth.oauth_authorize', provider='google') }}">Login with Google</a></p>
+    <p><b> Alternatively, continue with one of the following providers: </b></p>
+    <ul>
+      <li><a href="{{ url_for('auth.oauth_authorize', provider='facebook') }}">Login with Facebook</a>
+      <li><a href="{{ url_for('auth.oauth_authorize', provider='twitter') }}">Login with Twitter</a>
+      <li><a href="{{ url_for('auth.oauth_authorize', provider='google') }}">Login with Google</a>
 {% endif %}
+</div>
 
 {% endblock %}
