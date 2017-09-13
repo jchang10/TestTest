@@ -48,12 +48,7 @@ def oauth_callback(provider):
         return redirect(url_for('main.index'))
     ouser = OauthUser.query.filter(OauthUser.provider == provider, \
                                    OauthUser.social_id == me['social_id']).first()
-    user = None
-    if ouser:
-        # oauth user already exists, so query the user record
-        user = User.query.filter_by(id=ouser.user_id).first()
-        assert user != None, "OAuth record missing corresponding User record."
-    else:
+    if not ouser:
         # create oauth user record. see if a user record exists with matching email.
         # otherwise, create the new user record.
         ouser = OauthUser(provider=provider,
@@ -62,15 +57,21 @@ def oauth_callback(provider):
                           email=me.get('email', None),
                           name=me.get('name', None)
         )
-        user = User.query.filter_by(email=ouser.email).first()
-        import pdb; pdb.set_trace()
+    # ouser should now exist. find its user record.
+    user = ouser.user
+    if not user:
+        # see if a matching user_id or email exists
+        user = User.query.filter_by(id=ouser.user_id).first() or \
+               User.query.filter_by(email=ouser.email).first()
         if not user:
+            # if user record still does not exist, then create one.
             user = User(email=ouser.email,
-                        username=ouser.username if ouser.username else ouser.email,
+                    username=ouser.username if ouser.username else ouser.email,
             )
-            user.socials.append(ouser)
-        db.session.add(ouser)
-        db.session.add(user)
-        db.session.commit()
+        # user should now exist.
+        user.socials.append(ouser)
+    db.session.add(user)
+    db.session.add(ouser)
+    db.session.commit()
     login_user(user, True)
     return redirect(url_for('main.index'))

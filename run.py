@@ -17,7 +17,6 @@ if __name__ == '__main__':
         #     u.set_password('cat')
         #     db.session.add(u)
         #     db.session.commit()
-    app.run(debug=True, host='0.0.0.0')
+    app.run(port=5000)
 
-    
 
