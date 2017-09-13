@@ -1,0 +1,8 @@
+#
+pip install flask, flask-login, flask-bootstrap, flask-migrate, flask-restful, flask-script, flask-sqlalchemy
+
+# for zappa/lambda
+pip install zappa
+
+# auth/oauth
+pip install rauth
