@@ -1,6 +1,7 @@
 from flask import request, url_for
 from flask_restful import Api, Resource, reqparse, fields, marshal, abort
 
+from myapp.auth import httpauth
 from myapp.models import db, User
 from ..decorators import json, collection, etag
 
@@ -14,6 +15,7 @@ user_fields = {
 
 
 class UserListAPI(Resource):
+
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('email', type=str, location='json')
@@ -42,7 +44,10 @@ class UserListAPI(Resource):
         return {'user': marshal(user, user_fields)}, 201, \
                {'Location': url_for('api.user', id=user.id)}
     
+
 class UserAPI(Resource):
+    decorators = [httpauth.login_required]
+
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('email', type=str, location='json')

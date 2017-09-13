@@ -3,8 +3,8 @@ from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
-from config import config
-#import ipdb; ipdb.set_trace()
+from config.config import config
+from config.secrets import secrets
 
 db = SQLAlchemy()
 bootstrap = Bootstrap()
@@ -18,6 +18,7 @@ def create_app(config_name):
     # apply configuration
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
+    app.config.from_object(secrets[config_name])
 
     # initialize extensions
     db.init_app(app)

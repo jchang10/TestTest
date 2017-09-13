@@ -1,7 +1,7 @@
 from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 
-from . import auth
+from . import auth, httpauth
 from .. import db
 from .oauth import OAuthSignIn
 from ..models import User, OauthUser
@@ -75,3 +75,32 @@ def oauth_callback(provider):
     db.session.commit()
     login_user(user, True)
     return redirect(url_for('main.index'))
+
+
+@httpauth.verify_password
+def verify_password(username_or_token, password):
+    # first try to authenticate by token
+    user = User.verify_auth_token(username_or_token)
+    if not user:
+        # try to authenticate with username/password
+        user = User.query.filter_by(username=username_or_token).first()
+        if not user or not user.verify_password(password):
+            return False
+    g.user = user
+    return True
+
+
+from flask import jsonify, g
+
+@auth.route('/token')
+@httpauth.login_required
+def get_auth_token():
+    token = g.user.generate_auth_token(600)
+    return jsonify({'token': token.decode('ascii'), 'duration': 600})
+
+
+@auth.route('/test')
+@httpauth.login_required
+def get_resource():
+    return jsonify({'data': 'Hello, %s!' % g.user.username})
+

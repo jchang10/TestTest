@@ -1,5 +1,5 @@
 import os, sys
-from api import create_app
+from api.myapp import create_app
 
 """
 python3 run-server.py

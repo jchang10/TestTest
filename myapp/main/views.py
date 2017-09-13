@@ -9,9 +9,6 @@ from ..models import MyData
 
 BASEDIR = '/tmp'
 
-@main.route("/testme")
-def testme():
-    return "The URL for this page is {}".format(url_for('main.testme'))
 
 @main.route("/")
 def index():
